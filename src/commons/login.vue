@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="login-down">
-      <div class="login_left">
+      <div @click="home" class="login_left">
         <p>唯品会</p>
         <p>品牌特卖</p>
       </div>
@@ -51,6 +51,11 @@ export default {
       account:null,
       pass:null
     }
+  },
+  methods:{
+    home(){
+      this.$router.push('/')
+    }
   }
 };
 </script>
@@ -71,6 +76,7 @@ export default {
   /* border: 1px solid black; */
   font-size: 22px;
   text-align: center;
+  cursor: pointer;
 }
 .login_left p:nth-child(1) {
   font-size: 39px;

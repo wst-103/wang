@@ -11,7 +11,7 @@
       <div class="login-round">
         <div class="login_main">
            <div class="login_title">
-             <span :class="{}">扫码登录</span>
+             <span :class="{ }">扫码登录</span>
              <span>|</span>
              <span>账户登录</span>
            </div>

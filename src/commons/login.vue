@@ -1,4 +1,5 @@
 <template>
+<!-- 登录界面 -->
   <div class="login">
     <div class="login-down">
       <div @click="home" class="login_left">

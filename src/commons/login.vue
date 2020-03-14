@@ -12,45 +12,83 @@
       <div class="login-round">
         <div class="login_main">
           <div class="login_title">
-            <span :class="{ }">扫码登录</span>
+            <span @click="scan" :class="{changeColor:ma}">扫码登录</span>
             <span>|</span>
-            <span>账户登录</span>
+            <span @click="btnaccount" :class="{changeColor:ipone}">账户登录</span>
           </div>
-          <!-- 输入框 -->
-          <div class="login_input">
-            <div class="account">
-              <span>
-                <i class="el-icon-user"></i>
-              </span>
-              <input v-model="account" @blur="zhang" type="text" />
-              <span>
-                <i v-show="one" class="el-icon-circle-close"></i>
-              </span>
+          <!-- 账号登录 -->
+          <div v-show="ipone">
+            <!-- 输入框1 -->
+            <div class="login_input" v-show="s1">
+              <div class="account">
+                <span>
+                  <i class="el-icon-user"></i>
+                </span>
+                <input @change="iphone" v-model="account" @blur="zhang" type="text" :placeholder="accountInput" />
+                <span>
+                  <i v-show="one" class="el-icon-circle-close"></i>
+                </span>
+              </div>
+              <div class="mark">
+                <span v-if="one">请输入账号</span>
+              </div>
+              <div class="pass">
+                <span>
+                  <i class="el-icon-lock"></i>
+                </span>
+                <input v-model="pass" @blur="mi" type="text" :placeholder="passInput" />
+                <span>
+                  <i v-show="two" class="el-icon-circle-close"></i>
+                </span>
+              </div>
+              <div class="mark">
+                <span v-if="two">请输入密码</span>
+              </div>
             </div>
-            <div class="mark">
-              <span v-if="one">请输入账号</span>
+            <!-- 输入框2 -->
+            <div class="login_input" v-show="s2">
+              <div class="account">
+                <span>
+                  <i class="el-icon-phone-outline"></i>
+                </span>
+                <input v-model="one1" @change="iphone" @blur="zhang" type="text" placeholder="请输入手机号" />
+              </div>
+              <div class="mark">
+                <span v-if="one">手机号不能为空</span>
+              </div>
+              <div style="display:flex">
+                <div class="pass xinxi">
+                  <span>
+                    <i class="el-icon-chat-dot-square"></i>
+                  </span>
+                  <input v-model="pass" @blur="mi" type="text" placeholder="请输入短信验证码" />
+                </div>
+                <!-- <button class="mabtn" :disabled="shouji==''">获取验证码</button> -->
+                <el-button type="danger" class="mabtn" :disabled="btn">获取验证码</el-button>
+              </div>
+              <div class="mark">
+                <span v-if="two">验证码不能为空</span>
+              </div>
             </div>
-            <div class="pass">
-              <span>
-                <i class="el-icon-lock"></i>
-              </span>
-              <input v-model="pass" @blur="mi" type="text" />
-              <span>
-                <i class="el-icon-circle-close"></i>
-              </span>
+            <!-- 验证 -->
+            <div class="yan">
+              <span @click="noteBtn">{{btnName}}验证登录</span>
+              <el-button :plain="true" @click="open1" class="wang">忘记密码</el-button>
             </div>
-            <div class="mark">
-              <span v-if="two">请输入密码</span>
+            <!-- 按钮 -->
+            <div class="btn">
+              <button @click="btnLogin">登录</button>
             </div>
           </div>
-          <!-- 验证 -->
-          <div class="yan">
-            <span>短信验证登录</span>
-            <span>忘记密码</span>
-          </div>
-          <!-- 按钮 -->
-          <div class="btn">
-            <button @click="btnLogin">登录</button>
+          <!-- 扫码登录 -->
+          <div class="login_two" v-show="ma">
+            <div class="img">
+              <img src="@/assets/getQrImage.png" alt />
+            </div>
+            <div class="zhe" v-if="zhe">
+              <p>二维码已失效</p>
+              <button @click="shua">点击刷新</button>
+            </div>
           </div>
           <!-- 微信 -->
           <div class="xin">
@@ -94,13 +132,66 @@ export default {
     return {
       account: null,
       pass: null,
+
       one: false,
       two: false,
+      one1:null,
+
       change: "更多",
-      show: false
+      show: false,
+
+      ma: true,
+      ipone: false,
+
+      accountInput: "手机/用户名/邮箱",
+      passInput: "密码",
+
+      btnName: "短信",
+ 
+      s1:true,
+      s2:false,
+
+      shouji:null,
+
+      dis:false,
+      timer:null, //定时器
+      time:5,
+      zhe:false,
+      btn:true
     };
   },
   methods: {
+    open1() {
+        this.$message({
+          showClose: true,
+          message: '你个憨批，懒得说你'
+        });
+      },
+    setTime(){
+      this.timer = setInterval(()=>{
+        if(this.time>0){
+          this.time --
+          console.log(this.time)
+        }else{
+          clearInterval(this.timer);
+          this.timer = null;
+          this.zhe = true
+        }
+      },1000);
+    },
+    shua(){
+      this.zhe = false;
+      this.time = 5
+      this.setTime()
+    },
+    scan() {
+      this.ma = true;
+      this.ipone = false;
+    },
+    btnaccount() {
+      this.ma = false;
+      this.ipone = true;
+    },
     home() {
       this.$router.push("/");
     },
@@ -133,13 +224,62 @@ export default {
     },
     btnLogin() {
       if (this.zhang() && this.mi()) {
-        window.sessionStorage.setItem("name",this.account)
+        window.sessionStorage.setItem("name", this.account);
         this.$router.push("/");
       } else {
         this.zhang();
         this.mi();
       }
+    },
+    noteBtn() {
+       if (this.btnName === "短信") {
+        this.btnName = "密码";
+        this.s2 = true;
+        this.s1 = false
+      } else {
+        this.btnName = "短信";
+        this.s2 = false;
+        this.s1 = true
+      }
+    },
+    iphone(){
+       var RegExp=/^1[3456789]\d{9}$/;
+       if(RegExp.test(this.one1)){
+        //  this.btn = false
+         console.log("true")
+       }
+       else{
+        //  this.btn = true
+         console.log("false")
+       }
     }
+  },
+  watch:{
+    one1(){
+      console.log(this.one1)
+      var RegExp=/^1[3456789]\d{9}$/;
+      if(RegExp.test(this.one1)){
+         this.btn = false
+         console.log("true")
+       }
+       else{
+         this.btn = true
+         console.log("false")
+       }
+    }
+  },
+  created() {
+    window.sessionStorage.clear();
+    var _this = this;
+    document.onkeydown = function(e) {
+      let key = window.event.keyCode;
+      if (window.event.keyCode == 13) {
+        _this.btnLogin();
+      }
+    };
+  },
+  mounted(){
+    this.setTime()
   }
 };
 </script>
@@ -325,7 +465,86 @@ i {
   color: rgb(185, 185, 185);
   cursor: none;
 }
-span {
+.login_two {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 285px;
+  /* border: 1px solid black; */
+  position: relative;
+}
+.img {
+  border: 1px solid rgb(223, 216, 216);
+  /* position: relative; */
+  transition: all 0.5s;
+  left: 0px;
+  width: 170px;
+  height: 170px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* position: relative; */
+}
+.zhe{
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 12;
+  text-align: center;
+  
+}
+.zhe p{
+  margin: 50px 0 10px 0;
+}
+.zhe button{
+  width: 120px;
+  height: 32px;
+  background: rgb(214, 18, 133);
+  outline: none;
+  border: none;border-radius: 5px;
+  color: white;
+  font-size: 16px;
   cursor: pointer;
+}
+.img:hover {
+  left: -90px;
+}
+.login_title span:nth-child(2n-1):hover {
+  color: rgb(235, 31, 31);
+}
+.changeColor {
+  color: rgb(235, 31, 31);
+}
+.xinxi {
+  width: 50%;
+  margin-left: 26px;
+}
+.mabtn {
+  position: relative;
+  height: 50px;
+  /* padding-left: -20px; */
+  left: -26px;
+  width: 110px;
+  top: 5px;
+  font-size: 15px;
+  border-radius: 2px;
+  transition: all 0.5s;
+  border: none;
+  outline: none;
+}
+.mabtn:hover{
+  background-color: #fcedf2;
+}
+.wang{
+  width: 90px;
+  border: none;
+  margin-top: -20px;
+}
+</style>
+<style>
+.login_input .el-button--danger{
+  /* background-color: gray */
 }
 </style>

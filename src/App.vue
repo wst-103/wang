@@ -15,7 +15,7 @@ export default {
     $route(after, before) {
       let afterLeavel = after.path.split("/").length;
       let beforeLeavel = before.path.split("/").length;
-      console.log(after.name);
+      // console.log(after.name);
       this.name = after.name;
     }
   }

@@ -48,7 +48,27 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed:{
+     file(){
+       return this.$refs.input
+     }
+  },
+  methods:{
+    btn(){
+      this.file.click()
+      
+      
+    },
+    btnChange(){
+      const a = this.file.files[0]
+      console.log(a);
+      // 使用window.URL.createObjectURL()得到file数据
+      const fileData = window.URL.createObjectURL(a)
+      this.$refs.img.src = fileData
+    }
+  }
+}
 </script>
 
 <style scoped>

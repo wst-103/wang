@@ -1,71 +1,104 @@
 <template>
-  <div class="dlkjj">
-      企业复产复工
-      <div class="xia" style="width:150px">
-      <p style="background:red;">下拉</p>
-      <div class="a">zzzz</div>
+  <div>
+    <!-- <h2>公告栏文字停顿滚动</h2> -->
+    <div class="textBox">
+      <transition name="slide">
+        <p class="text" :key="text.id">{{text.val}}</p>
+      </transition>
+    </div>
+    <div v-for="(i,index) in 2" :key="index" class="a">
+      <img :src="img" alt="">
+    </div>
+    <div v-for="(i,index) in 2" :key="index" class="b">
+      <img :src="img2" alt="">
+    </div>
+    <div v-for="(i,index) in 2" :key="index" class="a">
+      <img :src="img3" alt="">
+    </div>
+    <div v-for="(i,index) in 2" :key="index" class="b">
+      <img :src="img4" alt="">
     </div>
   </div>
 </template>
-
+ 
 <script>
 export default {
-  data() {
+  name: 'scroll',
+  data () {
     return {
-      img: [
-        // require("@/assets/背水.jpg"),
-        // require("@/assets/大海.jpg"),
-        // require("@/assets/城市.jpg"),
-        // require("@/assets/桥.jpg")
+      textArr: [
+        '1 第一条公告',
+        '2 第二条公告第二条公告',
+        '3 第三条公告第三条公告第三条公告'
       ],
-      pic: [],
-      number: 1,
-      timer:null,
-    };
+      number: 0,
+      img:require("@/assets/1.png"),
+      img2:require("@/assets/2.png"),
+      img3:require("@/assets/3.png"),
+      img4:require("@/assets/4.png")
+    }
   },
-  mounted() {
-    this.pic.push(this.img.slice(0, 1));
-    this.time();
+  computed: {
+    text () {
+      return {
+        id: this.number,
+        val: this.textArr[this.number]
+      }
+    }
+  },
+  mounted () {
+    this.startMove()
   },
   methods: {
-    time() {
-      this.timer = setInterval(this.right, 2000);
-      // console.log("sda");
-    },
-    left() {
-      if (this.number == 0) {
-        this.number = 3;
-      } else {
-        this.number = this.number - 1;
-      }
-    },
-    right() {
-      if (this.number == 3) {
-        this.number = 0;
-      } else {
-        this.number = this.number + 1;
-      }
-    },
-    enter(){
-       clearInterval(this.timer)
-    },
-    leave(){
-      this.time()
+    startMove () {
+      // eslint-disable-next-line
+      let timer = setTimeout(() => {
+        if (this.number === 2) {
+          this.number = 0;
+        } else {
+          this.number += 1;
+        }
+        this.startMove();
+      }, 2000); // 滚动不需要停顿则将2000改成动画持续时间
     }
   }
-};
+}
 </script>
-
+ 
 <style scoped>
-.a{
-  width: 50px;
-  height: 100px;
-  border: 1px solid black;
-  display: none;
-  transition: all 0.5s;
-}
-.xia:hover .a {
-  display: block;
-  color: aqua;
-}
+  /* h2 {
+    padding: 20px 0
+  } */
+  .textBox {
+    width: 100%;
+    height: 40px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+  }
+  .text {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+  .slide-enter-active, .slide-leave-active {
+    transition: all 0.5s linear;
+  }
+  .slide-enter{
+    transform: translateY(20px) scale(1);
+    opacity: 1;
+  }
+  .slide-leave-to {
+    transform: translateY(-20px) scale(0.8);
+    opacity: 0;
+  }
+  .a{
+    z-index: 100;
+  }
+  .a,.b{
+    margin-top: -25px;
+    /* position: absolute; */
+    /* margin-top: 20px; */
+  }
 </style>

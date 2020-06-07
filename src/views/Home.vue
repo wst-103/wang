@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 测试 -->
     <svg>
       <clipPath id="c1" clipPathUnits="objectBoundingBox">
         <polygon points="0.50000,0.00000 0.57794,0.13500 0.42206,0.13500 0.50000,0.00000" />
